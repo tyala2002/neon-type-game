@@ -216,10 +216,12 @@ const GameEngine = () => {
                         </div>
                     </div>
 
-                    <div className="p-4 rounded-xl bg-black/20 text-left max-h-40 overflow-y-auto custom-scrollbar mt-4">
-                        <p className="text-slate-300 text-xs mb-2 uppercase font-bold">Result Text</p>
-                        <p className="text-white/80 leading-relaxed text-sm font-mono">{input}</p>
-                    </div>
+                    {gameMode !== 'ranking' && (
+                        <div className="p-4 rounded-xl bg-black/20 text-left max-h-40 overflow-y-auto custom-scrollbar mt-4">
+                            <p className="text-slate-300 text-xs mb-2 uppercase font-bold">Result Text</p>
+                            <p className="text-white/80 leading-relaxed text-sm font-mono">{input}</p>
+                        </div>
+                    )}
 
                     {gameMode === 'ranking' && !submissionStatus ? (
                         <div className="bg-white/5 p-6 rounded-xl border border-white/10 mt-4">
