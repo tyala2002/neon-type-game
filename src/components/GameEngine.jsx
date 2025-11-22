@@ -138,6 +138,7 @@ const GameEngine = () => {
                     <div className="max-w-md mx-auto w-full space-y-8">
                         <CustomTextForm
                             onStart={(text, duration) => {
+                                setShowFinishConfirmation(false);
                                 if (gameMode === 'ranking') {
                                     startGame(text, 180); // Fixed 180s for ranking
                                     setSubmissionStatus(null); // Reset submission status
