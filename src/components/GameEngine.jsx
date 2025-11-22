@@ -139,7 +139,7 @@ const GameEngine = () => {
                         <CustomTextForm
                             onStart={(text, duration) => {
                                 if (gameMode === 'ranking') {
-                                    startGame(text, 60); // Fixed 60s for ranking
+                                    startGame(text, 180); // Fixed 180s for ranking
                                     setSubmissionStatus(null); // Reset submission status
                                     setUserRank(null);
                                 } else {

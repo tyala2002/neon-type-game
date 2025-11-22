@@ -68,7 +68,7 @@ const TypingDisplay = ({
 
                             const isSpace = char === ' ';
                             return (
-                                <span key={index} className={`transition-colors duration-100 rounded px-[1px] ${colorClass} ${isSpace ? 'bg-white/5' : ''}`}>
+                                <span key={index} className={`transition-colors duration-100 rounded ${colorClass} ${isSpace ? 'bg-white/5' : ''}`}>
                                     {char}
                                 </span>
                             );
@@ -121,7 +121,7 @@ const TypingDisplay = ({
                                             {isCursor && (
                                                 <span className="inline-block w-[2px] h-[1em] bg-cyan-400 animate-pulse align-middle -mb-[2px] mr-[1px]" />
                                             )}
-                                            <span className={`rounded px-[1px] ${colorClass}`}>
+                                            <span className={`rounded ${colorClass}`}>
                                                 {char}
                                             </span>
                                         </React.Fragment>

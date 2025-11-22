@@ -68,7 +68,7 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
                 </h3>
                 {gameMode === 'ranking' && (
                     <p className="text-slate-400 text-xs text-center mb-2">
-                        Compete for the top score (60s)
+                        Compete for the top score (180s)
                     </p>
                 )}
 
