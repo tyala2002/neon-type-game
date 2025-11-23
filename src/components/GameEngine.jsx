@@ -37,6 +37,11 @@ const GameEngine = () => {
     const [submissionStatus, setSubmissionStatus] = useState(null); // 'success', 'error', null
     const [showRankingModal, setShowRankingModal] = useState(false);
     const [userRank, setUserRank] = useState(null);
+    const [lastGameSettings, setLastGameSettings] = useState({ text: null, duration: null });
+
+    // Load all text files for retry randomization
+    const textFiles = import.meta.glob('../target_text/*.txt', { as: 'raw', eager: true });
+    const texts = Object.values(textFiles);
 
     const inputRef = useRef(null);
 
@@ -140,6 +145,7 @@ const GameEngine = () => {
                         <CustomTextForm
                             onStart={(text, duration) => {
                                 setShowFinishConfirmation(false);
+                                setLastGameSettings({ text, duration }); // Save settings for retry
                                 if (gameMode === 'ranking') {
                                     startGame(text, 180); // Fixed 180s for ranking
                                     setSubmissionStatus(null); // Reset submission status
@@ -349,14 +355,38 @@ const GameEngine = () => {
                         </div>
                     ) : null}
 
-                    <button
-                        onClick={resetGame}
-                        className="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-lg hover:opacity-90 hover:scale-[1.02] transition-all shadow-lg shadow-cyan-500/25 mt-4"
-                    >
-                        Back to Menu
-                    </button>
-                </GlassCard>
-            </div>
+                    <div className="flex gap-4 mt-8">
+                        <button
+                            onClick={() => {
+                                setShowFinishConfirmation(false);
+                                setSubmissionStatus(null);
+                                setUserRank(null);
+
+                                let nextText = lastGameSettings.text;
+                                if (texts.length > 0) {
+                                    const randomIndex = Math.floor(Math.random() * texts.length);
+                                    nextText = texts[randomIndex];
+                                }
+
+                                if (gameMode === 'ranking') {
+                                    startGame(nextText, 180);
+                                } else {
+                                    startGame(nextText, lastGameSettings.duration);
+                                }
+                            }}
+                            className="flex-1 py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-bold text-lg hover:opacity-90 hover:scale-[1.02] transition-all shadow-lg shadow-orange-500/25"
+                        >
+                            Retry
+                        </button>
+                        <button
+                            onClick={resetGame}
+                            className="flex-1 py-4 rounded-xl bg-white/10 text-white font-bold text-lg hover:bg-white/20 hover:scale-[1.02] transition-all border border-white/10"
+                        >
+                            Back to Menu
+                        </button>
+                    </div>
+                </GlassCard >
+            </div >
         );
     }
 
