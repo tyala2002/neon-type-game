@@ -8,6 +8,7 @@ import confetti from 'canvas-confetti';
 import { calculateAccuracy } from '../utils/scoring';
 import { supabase } from '../lib/supabaseClient';
 import RankingBoard from './RankingBoard';
+import { ArrowLeft } from 'lucide-react';
 
 const GameEngine = () => {
     const {
@@ -302,14 +303,6 @@ const GameEngine = () => {
                                             }
 
                                             // 5. Calculate Rank (Always calculate rank for the CURRENT score)
-                                            // We want to know where THIS score would rank, or where the user currently ranks.
-                                            // If it's a new high score or new user, we check rank of THIS score.
-                                            // If it's NOT a high score, the user's best score is already in DB. 
-                                            // However, the user might want to know "If this score was submitted, what rank would it be?" OR "What is my current rank?"
-                                            // The request says: "Even if score is not updated, I want to know what rank THAT score was" (implied: or maybe their standing?)
-                                            // "そのスコアだと何位だったのかがわかるようにしたい" -> "I want to know what rank THAT score would be"
-                                            // So we should check rank of the CURRENT `score` variable against the DB.
-
                                             const { count, error: countError } = await supabase
                                                 .from('scores')
                                                 .select('*', { count: 'exact', head: true })
@@ -379,9 +372,10 @@ const GameEngine = () => {
             {/* Back to Menu Button */}
             <button
                 onClick={resetGame}
-                className="absolute top-4 left-4 z-50 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-sm font-bold transition-colors border border-white/10 backdrop-blur-sm"
+                className="absolute top-4 left-4 z-50 p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors border border-white/10 backdrop-blur-sm group"
+                title="Back to Menu"
             >
-                Back to Menu
+                <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
             </button>
 
             {/* Progress Bar */}
