@@ -81,7 +81,7 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
                                     className="flex items-center justify-center gap-2 w-full py-2.5 mb-4 rounded-lg bg-white/5 hover:bg-white/10 text-yellow-400 text-sm font-bold transition-colors border border-yellow-500/30"
                                 >
                                     <Trophy className="w-4 h-4" />
-                                    View Leaderboard
+                                    Leaderboard
                                 </button>
                                 <button
                                     type="button"
