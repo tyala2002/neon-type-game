@@ -69,6 +69,13 @@ const GameEngine = () => {
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !isComposing) {
             e.preventDefault();
+
+            // Ranking Mode: Require full text completion
+            if (gameMode === 'ranking' && input.length < targetText.length) {
+                // Optionally show a visual indicator that they need to complete the text
+                return;
+            }
+
             if (showFinishConfirmation) {
                 endGame();
             } else {
