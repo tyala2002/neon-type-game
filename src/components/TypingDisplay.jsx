@@ -42,7 +42,7 @@ const TypingDisplay = ({
     return (
         <div className="w-full max-w-5xl mx-auto h-full flex flex-col gap-4">
             {/* Target Text Display (Reference) */}
-            <GlassCard className="flex-1 p-6 overflow-hidden flex flex-col min-h-[30vh]">
+            <GlassCard className="flex-1 p-6 overflow-hidden flex flex-col min-h-[30vh]" innerClassName="h-full flex flex-col">
                 <div className="text-sm text-slate-400 mb-2 uppercase tracking-wider font-bold">Target Text</div>
                 <div className="flex-1 overflow-y-scroll custom-scrollbar">
                     <div className={`${textStyles} text-white/90`}>

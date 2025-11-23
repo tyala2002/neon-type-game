@@ -6,7 +6,7 @@ export function cn(...inputs) {
     return twMerge(clsx(inputs));
 }
 
-const GlassCard = ({ children, className }) => {
+const GlassCard = ({ children, className, innerClassName }) => {
     return (
         <div
             className={cn(
@@ -15,7 +15,7 @@ const GlassCard = ({ children, className }) => {
             )}
         >
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-            <div className="relative z-10">
+            <div className={cn("relative z-10", innerClassName)}>
                 {children}
             </div>
         </div>
