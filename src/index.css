@@ -5,9 +5,7 @@
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background: #0f172a;
-    /* Dark slate background */
-    color: #f8fafc;
+    /* Background and color handled by App.jsx for theming */
     overflow: hidden;
 }
 
@@ -31,4 +29,87 @@ body {
 
 .custom-scrollbar {
     scrollbar-gutter: stable;
+}
+
+/* Shockwave Effect Utilities */
+.shockwave-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shockwave-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 4px solid rgba(34, 211, 238, 0.8);
+    /* Cyan */
+    box-shadow: 0 0 50px rgba(34, 211, 238, 0.5), inset 0 0 50px rgba(34, 211, 238, 0.5);
+    animation: shockwave-expand 1s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+.shockwave-ring::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    border-radius: 50%;
+    border: 2px solid rgba(232, 121, 249, 0.6);
+    /* Purple */
+    animation: shockwave-expand 1s cubic-bezier(0.1, 0.9, 0.2, 1) 0.1s forwards;
+}
+
+.shockwave-flash {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+    opacity: 0;
+    animation: shockwave-flash 0.5s ease-out forwards;
+}
+
+@keyframes shockwave-expand {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+        border-width: 20px;
+    }
+
+    100% {
+        width: 250vmax;
+        height: 250vmax;
+        opacity: 0;
+        border-width: 0;
+    }
+}
+
+@keyframes shockwave-flash {
+    0% {
+        opacity: 0.4;
+        transform: scale(0.5);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+/* Scanline Effect */
+.scanlines {
+    background: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0) 50%,
+            rgba(0, 0, 0, 0.2) 50%,
+            rgba(0, 0, 0, 0.2));
+    background-size: 100% 4px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
 }

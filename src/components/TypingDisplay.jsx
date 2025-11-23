@@ -43,11 +43,14 @@ const TypingDisplay = ({
         <div className="w-full max-w-5xl mx-auto h-full flex flex-col gap-4">
             {/* Target Text Display (Reference) */}
             <GlassCard className="flex-1 p-6 overflow-hidden flex flex-col min-h-[30vh]" innerClassName="h-full flex flex-col">
-                <div className="text-sm text-slate-400 mb-2 uppercase tracking-wider font-bold">Target Text</div>
+                <div className="text-sm dark:text-slate-400 text-slate-500 mb-2 uppercase tracking-wider font-bold">Target Text</div>
                 <div className="flex-1 overflow-y-scroll custom-scrollbar">
-                    <div className={`${textStyles} text-white/90`}>
+                    <div className={`${textStyles} dark:text-white/90 text-slate-900 font-medium`}>
                         {targetSentence.split('').map((char, index) => {
-                            let colorClass = gameMode === 'ranking' ? "text-white" : "text-white/30";
+                            // Default color for untyped/future text
+                            let colorClass = gameMode === 'ranking'
+                                ? "dark:text-white/90 text-slate-900"
+                                : "dark:text-white/30 text-slate-500";
 
                             if (index < input.length) {
                                 // Check if this character is part of the active composition
@@ -56,19 +59,19 @@ const TypingDisplay = ({
                                     index < cursorPos;
 
                                 if (gameMode === 'ranking') {
-                                    colorClass = "text-white"; // Always opaque in ranking mode
+                                    colorClass = "dark:text-white text-slate-900"; // Always opaque in ranking mode
                                 } else if (isComposingChar) {
-                                    colorClass = "text-white/30"; // Keep it dim/default during composition
+                                    colorClass = "dark:text-white/30 text-slate-300"; // Keep it dim/default during composition
                                 } else if (input[index] === char) {
-                                    colorClass = "text-cyan-400";
+                                    colorClass = "dark:text-cyan-400 text-cyan-600";
                                 } else {
-                                    colorClass = "text-red-400/50";
+                                    colorClass = "dark:text-red-400/50 text-red-500/50";
                                 }
                             }
 
                             const isSpace = char === ' ';
                             return (
-                                <span key={index} className={`transition-colors duration-100 rounded ${colorClass} ${isSpace ? 'bg-white/5' : ''}`}>
+                                <span key={index} className={`transition-colors duration-100 rounded ${colorClass} ${isSpace ? 'dark:bg-white/5 bg-slate-200' : ''}`}>
                                     {char}
                                 </span>
                             );
@@ -83,7 +86,7 @@ const TypingDisplay = ({
                 <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
 
                 <div className="relative z-10 flex flex-col flex-1 overflow-hidden">
-                    <div className="text-sm text-cyan-400 mb-2 uppercase tracking-wider font-bold flex justify-between items-center">
+                    <div className="text-sm dark:text-cyan-400 text-cyan-600 mb-2 uppercase tracking-wider font-bold flex justify-between items-center">
                         <span>Your Input</span>
                         <span className={`transition-colors duration-300 ${showFinishConfirmation ? 'text-yellow-400 animate-pulse font-bold' : ''}`}>
                             {showFinishConfirmation ? 'Press Enter again to Finish' : (isComposing ? 'Converting...' : 'Type & Enter')}
@@ -96,7 +99,7 @@ const TypingDisplay = ({
                             ref={displayContainerRef}
                             className="absolute inset-0 overflow-hidden pointer-events-none pr-2"
                         >
-                            <div className={`${textStyles} text-white/90`}>
+                            <div className={`${textStyles} dark:text-white/90 text-slate-800`}>
                                 {input.split('').map((char, index) => {
                                     const isMatch = index < targetSentence.length && char === targetSentence[index];
 
@@ -107,11 +110,11 @@ const TypingDisplay = ({
 
                                     let colorClass;
                                     if (isComposingChar) {
-                                        colorClass = "text-white border-b-2 border-white/50"; // Neutral style for composing
+                                        colorClass = "dark:text-white text-slate-900 border-b-2 dark:border-white/50 border-slate-400"; // Neutral style for composing
                                     } else if (gameMode === 'ranking') {
-                                        colorClass = "text-white"; // Neutral color for ranking mode
+                                        colorClass = "dark:text-white text-slate-900"; // Neutral color for ranking mode
                                     } else {
-                                        colorClass = isMatch ? "text-cyan-300" : "text-red-400 bg-red-400/10 rounded-sm";
+                                        colorClass = isMatch ? "dark:text-cyan-300 text-cyan-600" : "dark:text-red-400 text-red-600 dark:bg-red-400/10 bg-red-500/10 rounded-sm";
                                     }
 
                                     const isCursor = index === cursorPos;
@@ -119,7 +122,7 @@ const TypingDisplay = ({
                                     return (
                                         <React.Fragment key={index}>
                                             {isCursor && (
-                                                <span className="inline-block w-[2px] h-[1em] bg-cyan-400 animate-pulse align-middle -mb-[2px] mr-[1px]" />
+                                                <span className="inline-block w-[2px] h-[1em] dark:bg-cyan-400 bg-cyan-600 animate-pulse align-middle -mb-[2px] mr-[1px]" />
                                             )}
                                             <span className={`rounded ${colorClass}`}>
                                                 {char}
@@ -129,7 +132,7 @@ const TypingDisplay = ({
                                 })}
                                 {/* Cursor at the end */}
                                 {cursorPos === input.length && (
-                                    <span className="inline-block w-[2px] h-[1em] bg-cyan-400 animate-pulse align-middle -mb-[2px] ml-[1px]" />
+                                    <span className="inline-block w-[2px] h-[1em] dark:bg-cyan-400 bg-cyan-600 animate-pulse align-middle -mb-[2px] ml-[1px]" />
                                 )}
                             </div>
                         </div>

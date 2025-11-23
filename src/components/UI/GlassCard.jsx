@@ -10,7 +10,7 @@ const GlassCard = ({ children, className, innerClassName }) => {
     return (
         <div
             className={cn(
-                "relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-xl",
+                "relative overflow-hidden rounded-2xl border dark:border-white/10 border-slate-200 dark:bg-white/5 bg-white/60 backdrop-blur-md shadow-xl",
                 className
             )}
         >

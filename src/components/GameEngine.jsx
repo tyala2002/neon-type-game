@@ -4,7 +4,8 @@ import { useGameLogic } from '../hooks/useGameLogic';
 import TypingDisplay from './TypingDisplay';
 import GlassCard from './UI/GlassCard';
 import CustomTextForm from './CustomTextForm';
-import confetti from 'canvas-confetti';
+// import confetti from 'canvas-confetti'; // Removed for glitch effect
+import DecodedText from './UI/DecodedText';
 import { calculateAccuracy } from '../utils/scoring';
 import { supabase } from '../lib/supabaseClient';
 import RankingBoard from './RankingBoard';
@@ -41,7 +42,7 @@ const GameEngine = () => {
     const [rankingTab, setRankingTab] = useState('leaderboard');
 
     // Load all text files for retry randomization
-    const textFiles = import.meta.glob('../target_text/*.txt', { as: 'raw', eager: true });
+    const textFiles = import.meta.glob('../target_text/*.txt', { query: '?raw', import: 'default', eager: true });
     const texts = Object.values(textFiles);
 
     const inputRef = useRef(null);
@@ -105,13 +106,14 @@ const GameEngine = () => {
         setCursorPos(e.target.selectionStart);
     };
 
+    // Shockwave Effect State
+    const [showShockwave, setShowShockwave] = useState(false);
+
     useEffect(() => {
         if (gameState === 'finished') {
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
+            setShowShockwave(true);
+            const timer = setTimeout(() => setShowShockwave(false), 1000); // Shockwave lasts 1s
+            return () => clearTimeout(timer);
         }
     }, [gameState]);
 
@@ -196,8 +198,8 @@ const GameEngine = () => {
 
         return (
             <div className="min-h-screen flex flex-col items-center justify-center max-w-4xl mx-auto px-4 text-center">
-                <GlassCard className="p-12 space-y-8 w-full border-purple-500/30">
-                    <h2 className="text-5xl font-bold text-white mb-4">
+                <GlassCard className="p-12 space-y-8 w-full dark:border-purple-500/30 border-purple-200">
+                    <h2 className="text-5xl font-bold dark:text-white text-slate-900 mb-4">
                         {timeLimit && timeLeft === 0 ? "Time's Up!" : "Game Complete!"}
                     </h2>
 
@@ -205,41 +207,41 @@ const GameEngine = () => {
                     <div className="flex flex-col items-center justify-center mb-8">
                         <div className="text-slate-400 text-sm uppercase tracking-wider mb-2 font-bold">Total Score</div>
                         <div className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]">
-                            {score}
+                            <DecodedText value={score} duration={1500} />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-6">
-                        <div className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center">
-                            <p className="text-slate-400 text-xs uppercase tracking-wider mb-2 font-bold">Speed</p>
-                            <p className="text-4xl font-bold text-cyan-400">{cpm}</p>
+                        <div className="p-6 rounded-2xl dark:bg-white/5 bg-white/60 border dark:border-white/10 border-slate-200 flex flex-col items-center shadow-sm">
+                            <p className="dark:text-slate-400 text-slate-500 text-xs uppercase tracking-wider mb-2 font-bold">Speed</p>
+                            <p className="text-4xl font-bold dark:text-cyan-400 text-cyan-600">{cpm}</p>
                             <p className="text-xs text-slate-500 mt-1">chars/min</p>
                         </div>
-                        <div className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center">
-                            <p className="text-slate-400 text-xs uppercase tracking-wider mb-2 font-bold">Accuracy</p>
-                            <p className={`text-4xl font-bold ${accuracy >= 95 ? 'text-green-400' : accuracy >= 80 ? 'text-yellow-400' : 'text-red-400'}`}>
+                        <div className="p-6 rounded-2xl dark:bg-white/5 bg-white/60 border dark:border-white/10 border-slate-200 flex flex-col items-center shadow-sm">
+                            <p className="dark:text-slate-400 text-slate-500 text-xs uppercase tracking-wider mb-2 font-bold">Accuracy</p>
+                            <p className={`text-4xl font-bold ${accuracy >= 95 ? 'text-green-500' : accuracy >= 80 ? 'text-yellow-500' : 'text-red-500'}`}>
                                 {accuracy}%
                             </p>
                             <p className="text-xs text-slate-500 mt-1">Final Match</p>
                         </div>
-                        <div className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center">
-                            <p className="text-slate-400 text-xs uppercase tracking-wider mb-2 font-bold">Time</p>
-                            <p className="text-4xl font-bold text-purple-400">
+                        <div className="p-6 rounded-2xl dark:bg-white/5 bg-white/60 border dark:border-white/10 border-slate-200 flex flex-col items-center shadow-sm">
+                            <p className="dark:text-slate-400 text-slate-500 text-xs uppercase tracking-wider mb-2 font-bold">Time</p>
+                            <p className="text-4xl font-bold dark:text-purple-400 text-purple-600">
                                 {timeSeconds.toFixed(1)}s
                             </p>
                         </div>
                     </div>
 
                     {gameMode !== 'ranking' && (
-                        <div className="p-4 rounded-xl bg-black/20 text-left max-h-40 overflow-y-auto custom-scrollbar mt-4">
-                            <p className="text-slate-300 text-xs mb-2 uppercase font-bold">Result Text</p>
-                            <p className="text-white/80 leading-relaxed text-sm font-mono">{input}</p>
+                        <div className="p-4 rounded-xl dark:bg-black/20 bg-slate-100 text-left max-h-40 overflow-y-auto custom-scrollbar mt-4">
+                            <p className="dark:text-slate-300 text-slate-500 text-xs mb-2 uppercase font-bold">Result Text</p>
+                            <p className="dark:text-white/80 text-slate-700 leading-relaxed text-sm font-mono">{input}</p>
                         </div>
                     )}
 
                     {gameMode === 'ranking' && !submissionStatus ? (
-                        <div className="bg-white/5 p-6 rounded-xl border border-white/10 mt-4">
-                            <h3 className="text-xl font-bold text-white mb-4">Submit to Ranking Mode</h3>
+                        <div className="dark:bg-white/5 bg-white/60 p-6 rounded-xl border dark:border-white/10 border-slate-200 mt-4 shadow-sm">
+                            <h3 className="text-xl font-bold dark:text-white text-slate-900 mb-4">Submit to Ranking Mode</h3>
                             <div className="flex gap-2">
                                 <input
                                     type="text"
@@ -247,7 +249,7 @@ const GameEngine = () => {
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                     maxLength={20}
-                                    className="flex-1 bg-black/30 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500 transition-colors"
+                                    className="flex-1 dark:bg-black/30 bg-white border dark:border-white/20 border-slate-300 rounded-lg px-4 py-2 dark:text-white text-slate-900 focus:outline-none focus:border-yellow-500 transition-colors"
                                 />
                                 <button
                                     onClick={async () => {
@@ -354,21 +356,21 @@ const GameEngine = () => {
                         </div>
                     ) : gameMode === 'ranking' && submissionStatus === 'success' ? (
                         <div className="bg-green-500/20 p-6 rounded-xl border border-green-500/50 mt-4">
-                            <h3 className="text-xl font-bold text-green-400 mb-2">Score Submitted!</h3>
-                            <p className="text-slate-300 text-sm mb-2">Your score has been added to the ranking.</p>
+                            <h3 className="text-xl font-bold dark:text-green-400 text-green-600 mb-2">Score Submitted!</h3>
+                            <p className="dark:text-slate-300 text-slate-600 text-sm mb-2">Your score has been added to the ranking.</p>
                             {userRank && (
-                                <div className="text-lg font-bold text-white">
-                                    Your Rank: <span className="text-yellow-400 text-2xl">#{userRank}</span>
+                                <div className="text-lg font-bold dark:text-white text-slate-800">
+                                    Your Rank: <span className="dark:text-yellow-400 text-yellow-600 text-2xl">#{userRank}</span>
                                 </div>
                             )}
                         </div>
                     ) : gameMode === 'ranking' && submissionStatus === 'not_high_score' ? (
                         <div className="bg-yellow-500/20 p-6 rounded-xl border border-yellow-500/50 mt-4">
-                            <h3 className="text-xl font-bold text-yellow-400 mb-2">Good Game!</h3>
-                            <p className="text-slate-300 text-sm mb-2">You didn't beat your personal best this time, but keep trying!</p>
+                            <h3 className="text-xl font-bold dark:text-yellow-400 text-yellow-600 mb-2">Good Game!</h3>
+                            <p className="dark:text-slate-300 text-slate-600 text-sm mb-2">You didn't beat your personal best this time, but keep trying!</p>
                             {userRank && (
-                                <div className="text-lg font-bold text-white">
-                                    Rank for this score: <span className="text-yellow-400 text-2xl">#{userRank}</span>
+                                <div className="text-lg font-bold dark:text-white text-slate-800">
+                                    Rank for this score: <span className="dark:text-yellow-400 text-yellow-600 text-2xl">#{userRank}</span>
                                 </div>
                             )}
                         </div>
@@ -399,12 +401,18 @@ const GameEngine = () => {
                         </button>
                         <button
                             onClick={resetGame}
-                            className="flex-1 py-4 rounded-xl bg-white/10 text-white font-bold text-lg hover:bg-white/20 hover:scale-[1.02] transition-all border border-white/10"
+                            className="flex-1 py-4 rounded-xl dark:bg-white/10 bg-slate-200 dark:text-white text-slate-700 font-bold text-lg dark:hover:bg-white/20 hover:bg-slate-300 hover:scale-[1.02] transition-all border dark:border-white/10 border-slate-300"
                         >
                             Back to Menu
                         </button>
                     </div>
                 </GlassCard >
+                {showShockwave && (
+                    <div className="shockwave-container">
+                        <div className="shockwave-flash" />
+                        <div className="shockwave-ring" />
+                    </div>
+                )}
             </div >
         );
     }
@@ -413,36 +421,27 @@ const GameEngine = () => {
         <div
             className={`h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 relative outline-none overflow-hidden transition-colors duration-700
                 ${gameMode === 'ranking'
-                    ? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#1a1005] to-black'
-                    : 'bg-slate-900'
+                    ? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] dark:from-slate-900 dark:via-[#1a1005] dark:to-black from-amber-100 via-orange-50 to-white'
+                    : 'bg-transparent'
                 }`}
             onClick={() => inputRef.current?.focus()}
         >
             {/* Back to Menu Button */}
             <button
                 onClick={resetGame}
-                className="absolute top-4 left-4 z-50 p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors border border-white/10 backdrop-blur-sm group"
+                className="absolute top-4 left-4 z-50 p-2 rounded-lg dark:bg-white/5 bg-white/60 hover:bg-white/10 dark:hover:bg-white/10 dark:text-slate-400 text-slate-500 hover:text-white dark:hover:text-white transition-colors border dark:border-white/10 border-slate-200 backdrop-blur-sm group"
                 title="Back to Menu"
             >
                 <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
             </button>
 
-            {/* Progress Bar */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-slate-800 z-10">
-                <motion.div
-                    className="h-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.8)]"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(input.length / targetText.length) * 100}%` }}
-                />
-            </div>
-
-            <div className="w-full max-w-5xl mb-4 flex justify-between text-slate-400 px-2 z-10">
+            <div className="w-full max-w-5xl mb-4 flex justify-between dark:text-slate-400 text-slate-500 px-2 z-10">
                 <div className="font-mono text-sm font-bold tracking-wider">
                     {gameMode === 'ranking' ? 'RANKING MODE' : 'CHALLENGE MODE'}
                 </div>
                 <div className="flex items-center gap-4">
                     {timeLimit && (
-                        <div className={`font-mono text-sm font-bold ${timeLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-cyan-400'}`}>
+                        <div className={`font-mono text-sm font-bold ${timeLeft <= 10 ? 'text-red-400 animate-pulse' : 'dark:text-cyan-400 text-cyan-600'}`}>
                             TIME: {Math.floor(timeLeft / 60).toString().padStart(2, '0')}:{(timeLeft % 60).toString().padStart(2, '0')}
                         </div>
                     )}

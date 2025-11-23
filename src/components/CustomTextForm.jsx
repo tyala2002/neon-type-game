@@ -7,7 +7,7 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
     const [seconds, setSeconds] = useState(0);
 
     // Load all text files from ../target_text directory
-    const textFiles = import.meta.glob('../target_text/*.txt', { as: 'raw', eager: true });
+    const textFiles = import.meta.glob('../target_text/*.txt', { query: '?raw', import: 'default', eager: true });
     const texts = Object.values(textFiles);
 
     const handleSubmit = (e) => {
@@ -45,7 +45,7 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
     const formatNumber = (num) => num.toString().padStart(2, '0');
 
     return (
-        <GlassCard className="p-5 hover:bg-white/10 transition-colors group">
+        <GlassCard className="p-5 dark:hover:bg-white/10 hover:bg-white/40 transition-colors group">
             <div className="h-full flex flex-col items-center space-y-3">
                 {/* Mode Toggle */}
                 <div className="flex bg-black/20 p-1 rounded-lg mb-2">
@@ -63,7 +63,7 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
                     </button>
                 </div>
 
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold dark:text-white text-slate-800">
                     {gameMode === 'ranking' ? 'Ranking Mode' : 'Challenge Mode'}
                 </h3>
 
@@ -78,7 +78,7 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
                                 <button
                                     type="button"
                                     onClick={() => onShowRanking('leaderboard')}
-                                    className="flex items-center justify-center gap-2 w-full py-2.5 mb-4 rounded-lg bg-white/5 hover:bg-white/10 text-yellow-400 text-sm font-bold transition-colors border border-yellow-500/30"
+                                    className="flex items-center justify-center gap-2 w-full py-2.5 mb-4 rounded-lg bg-white/5 hover:bg-white/10 dark:text-yellow-400 text-yellow-600 text-sm font-bold transition-colors border border-yellow-500/30"
                                 >
                                     <Trophy className="w-4 h-4" />
                                     Leaderboard
@@ -86,7 +86,7 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
                                 <button
                                     type="button"
                                     onClick={() => onShowRanking('history')}
-                                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-yellow-400 text-sm font-bold transition-colors border border-yellow-500/30"
+                                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-white/5 hover:bg-white/10 dark:text-yellow-400 text-yellow-600 text-sm font-bold transition-colors border border-yellow-500/30"
                                 >
                                     <History className="w-4 h-4" />
                                     My History
@@ -95,25 +95,25 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
                         ) : (
                             <div className="flex flex-col items-center space-y-2 w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
                                 <label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Time Limit</label>
-                                <div className="flex items-center justify-center gap-4 bg-slate-900/50 p-3 rounded-xl border border-white/10 w-full">
+                                <div className="flex items-center justify-center gap-4 dark:bg-slate-900/50 bg-slate-200/50 p-3 rounded-xl border dark:border-white/10 border-slate-300 w-full">
                                     {/* Minutes */}
                                     <div className="flex flex-col items-center gap-1">
                                         <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Min</span>
-                                        <div className="text-xl font-mono font-bold text-white w-12 text-center bg-black/20 rounded py-1">
+                                        <div className="text-xl font-mono font-bold dark:text-white text-slate-800 w-12 text-center dark:bg-black/20 bg-white/50 rounded py-1">
                                             {minutes === 0 && seconds === 0 ? '--' : formatNumber(minutes)}
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <button
                                                 type="button"
                                                 onClick={() => adjustTime('minutes', -1)}
-                                                className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
+                                                className="w-6 h-6 flex items-center justify-center rounded-full dark:bg-white/5 bg-white/50 hover:bg-white/20 dark:hover:bg-white/20 dark:text-slate-300 text-slate-600 hover:text-slate-900 dark:hover:text-white transition-all active:scale-95"
                                             >
                                                 -
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => adjustTime('minutes', 1)}
-                                                className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
+                                                className="w-6 h-6 flex items-center justify-center rounded-full dark:bg-white/5 bg-white/50 hover:bg-white/20 dark:hover:bg-white/20 dark:text-slate-300 text-slate-600 hover:text-slate-900 dark:hover:text-white transition-all active:scale-95"
                                             >
                                                 +
                                             </button>
@@ -125,21 +125,21 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
                                     {/* Seconds */}
                                     <div className="flex flex-col items-center gap-1">
                                         <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Sec</span>
-                                        <div className="text-xl font-mono font-bold text-white w-12 text-center bg-black/20 rounded py-1">
+                                        <div className="text-xl font-mono font-bold dark:text-white text-slate-800 w-12 text-center dark:bg-black/20 bg-white/50 rounded py-1">
                                             {minutes === 0 && seconds === 0 ? '--' : formatNumber(seconds)}
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <button
                                                 type="button"
                                                 onClick={() => adjustTime('seconds', -1)}
-                                                className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
+                                                className="w-6 h-6 flex items-center justify-center rounded-full dark:bg-white/5 bg-white/50 hover:bg-white/20 dark:hover:bg-white/20 dark:text-slate-300 text-slate-600 hover:text-slate-900 dark:hover:text-white transition-all active:scale-95"
                                             >
                                                 -
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => adjustTime('seconds', 1)}
-                                                className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
+                                                className="w-6 h-6 flex items-center justify-center rounded-full dark:bg-white/5 bg-white/50 hover:bg-white/20 dark:hover:bg-white/20 dark:text-slate-300 text-slate-600 hover:text-slate-900 dark:hover:text-white transition-all active:scale-95"
                                             >
                                                 +
                                             </button>
