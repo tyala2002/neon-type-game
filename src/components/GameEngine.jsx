@@ -192,9 +192,10 @@ const GameEngine = () => {
         // We compare input against the target text prefix of the same length
         const accuracy = calculateAccuracy(input, targetText.slice(0, input.length));
 
-        // Score: (CPM * Accuracy * Length) / 10
-        // Rewards both speed, accuracy, and text length
-        const score = Math.round((cpm * (accuracy / 100) * input.length) / 10);
+        // Score: CPM * (Accuracy / 100) * log10(Length + 1) * 100
+        // Rewards speed and accuracy, with logarithmic bonus for text length
+        // (10x length → ~2x score, 100x length → ~3x score)
+        const score = Math.round(cpm * (accuracy / 100) * Math.log10(input.length + 1) * 100);
 
         return (
             <div className="min-h-screen flex flex-col items-center justify-center max-w-4xl mx-auto px-4 text-center">
