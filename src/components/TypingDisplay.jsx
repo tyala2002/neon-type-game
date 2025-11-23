@@ -61,7 +61,7 @@ const TypingDisplay = ({
                                 if (gameMode === 'ranking') {
                                     colorClass = "dark:text-white text-slate-900"; // Always opaque in ranking mode
                                 } else if (isComposingChar) {
-                                    colorClass = "dark:text-white/30 text-slate-300"; // Keep it dim/default during composition
+                                    colorClass = "dark:text-white/30 text-slate-500"; // Keep it dim/default during composition
                                 } else if (input[index] === char) {
                                     colorClass = "dark:text-cyan-400 text-cyan-600";
                                 } else {
