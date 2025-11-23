@@ -394,7 +394,9 @@ const GameEngine = () => {
             </div>
 
             <div className="w-full max-w-5xl mb-4 flex justify-between text-slate-400 px-2 z-10">
-                <div className="font-mono text-sm">NEON TYPE</div>
+                <div className="font-mono text-sm font-bold tracking-wider">
+                    {gameMode === 'ranking' ? 'RANKING MODE' : 'CHALLENGE MODE'}
+                </div>
                 <div className="flex items-center gap-4">
                     {timeLimit && (
                         <div className={`font-mono text-sm font-bold ${timeLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-cyan-400'}`}>
