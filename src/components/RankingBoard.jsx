@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
     const [activeTab, setActiveTab] = useState(initialTab); // 'leaderboard' | 'history'
+    const [selectedMetric, setSelectedMetric] = useState('score'); // 'score' | 'cpm' | 'accuracy'
     const [scores, setScores] = useState([]);
     const [localHistory, setLocalHistory] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -54,6 +55,8 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
             const formattedHistory = history.map(h => ({
                 ...h,
                 score: Number(h.score),
+                cpm: Number(h.cpm),
+                accuracy: Number(h.accuracy),
                 date: h.date
             }));
             formattedHistory.sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -201,9 +204,44 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
                                     </div>
                                 ) : (
                                     <div className="flex-1 w-full h-full p-4 flex flex-col">
-                                        <div className="flex items-center gap-2 mb-4 text-yellow-400 flex-shrink-0">
-                                            <TrendingUp className="w-5 h-5" />
-                                            <h3 className="font-bold">Score Progression</h3>
+                                        <div className="flex items-center justify-between mb-4 flex-shrink-0">
+                                            <div className="flex items-center gap-2 text-yellow-400">
+                                                <TrendingUp className="w-5 h-5" />
+                                                <h3 className="font-bold">
+                                                    {selectedMetric === 'score' ? 'Score Progression' :
+                                                        selectedMetric === 'cpm' ? 'CPM Progression' :
+                                                            'Accuracy Progression'}
+                                                </h3>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => setSelectedMetric('score')}
+                                                    className={`px-3 py-1 rounded text-xs font-bold transition-all ${selectedMetric === 'score'
+                                                            ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50'
+                                                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                                        }`}
+                                                >
+                                                    Score
+                                                </button>
+                                                <button
+                                                    onClick={() => setSelectedMetric('cpm')}
+                                                    className={`px-3 py-1 rounded text-xs font-bold transition-all ${selectedMetric === 'cpm'
+                                                            ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50'
+                                                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                                        }`}
+                                                >
+                                                    CPM
+                                                </button>
+                                                <button
+                                                    onClick={() => setSelectedMetric('accuracy')}
+                                                    className={`px-3 py-1 rounded text-xs font-bold transition-all ${selectedMetric === 'accuracy'
+                                                            ? 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50'
+                                                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                                        }`}
+                                                >
+                                                    Accuracy
+                                                </button>
+                                            </div>
                                         </div>
                                         <div className="w-full h-[400px]">
                                             <ResponsiveContainer width="100%" height="100%">
@@ -219,7 +257,7 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
                                                     <YAxis
                                                         stroke="#94a3b8"
                                                         fontSize={12}
-                                                        domain={['auto', 'auto']}
+                                                        domain={selectedMetric === 'accuracy' ? [0, 100] : ['auto', 'auto']}
                                                     />
                                                     <Tooltip
                                                         contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#f8fafc' }}
@@ -228,7 +266,7 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
                                                     />
                                                     <Line
                                                         type="monotone"
-                                                        dataKey="score"
+                                                        dataKey={selectedMetric}
                                                         stroke="#facc15"
                                                         strokeWidth={3}
                                                         dot={{ r: 4, fill: '#0f172a', stroke: '#facc15', strokeWidth: 2 }}
