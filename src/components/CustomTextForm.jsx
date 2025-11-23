@@ -45,7 +45,7 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
     const formatNumber = (num) => num.toString().padStart(2, '0');
 
     return (
-        <GlassCard className="p-6 hover:bg-white/10 transition-colors group">
+        <GlassCard className="p-5 hover:bg-white/10 transition-colors group">
             <div className="h-full flex flex-col items-center space-y-3">
                 {/* Mode Toggle */}
                 <div className="flex bg-black/20 p-1 rounded-lg mb-2">
@@ -66,79 +66,81 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
                 <h3 className="text-xl font-bold text-white">
                     {gameMode === 'ranking' ? 'Ranking Mode' : 'Challenge Mode'}
                 </h3>
-                {gameMode === 'ranking' && (
-                    <p className="text-slate-400 text-xs text-center mb-2">
-                        Compete for the top score (180s)
-                    </p>
-                )}
 
-                {gameMode === 'ranking' && (
-                    <button
-                        onClick={onShowRanking}
-                        className="flex items-center justify-center gap-2 w-full py-2 mb-4 rounded-lg bg-white/5 hover:bg-white/10 text-yellow-400 text-sm font-bold transition-colors border border-yellow-500/30"
-                    >
-                        <Trophy className="w-4 h-4" />
-                        View Leaderboard
-                    </button>
-                )}
-
-                <form onSubmit={handleSubmit} className="w-full space-y-5">
-                    {gameMode !== 'ranking' && (
-                        <div className="flex flex-col items-center space-y-2">
-                            <label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Time Limit</label>
-                            <div className="flex items-center justify-center gap-4 bg-slate-900/50 p-3 rounded-xl border border-white/10">
-                                {/* Minutes */}
-                                <div className="flex flex-col items-center gap-1">
-                                    <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Min</span>
-                                    <div className="text-xl font-mono font-bold text-white w-12 text-center bg-black/20 rounded py-1">
-                                        {minutes === 0 && seconds === 0 ? '--' : formatNumber(minutes)}
+                <form onSubmit={handleSubmit} className="w-full space-y-4">
+                    {/* Variable Content Area with Fixed Min-Height */}
+                    <div className="w-full min-h-[160px] flex flex-col justify-center">
+                        {gameMode === 'ranking' ? (
+                            <div className="flex flex-col items-center w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                <p className="text-slate-400 text-xs text-center mb-4">
+                                    Compete for the top score (180s)
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={onShowRanking}
+                                    className="flex items-center justify-center gap-2 w-full py-2.5 mb-4 rounded-lg bg-white/5 hover:bg-white/10 text-yellow-400 text-sm font-bold transition-colors border border-yellow-500/30"
+                                >
+                                    <Trophy className="w-4 h-4" />
+                                    View Leaderboard
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center space-y-2 w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                <label className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Time Limit</label>
+                                <div className="flex items-center justify-center gap-4 bg-slate-900/50 p-3 rounded-xl border border-white/10 w-full">
+                                    {/* Minutes */}
+                                    <div className="flex flex-col items-center gap-1">
+                                        <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Min</span>
+                                        <div className="text-xl font-mono font-bold text-white w-12 text-center bg-black/20 rounded py-1">
+                                            {minutes === 0 && seconds === 0 ? '--' : formatNumber(minutes)}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => adjustTime('minutes', -1)}
+                                                className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
+                                            >
+                                                -
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => adjustTime('minutes', 1)}
+                                                className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => adjustTime('minutes', -1)}
-                                            className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
-                                        >
-                                            -
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => adjustTime('minutes', 1)}
-                                            className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
-                                        >
-                                            +
-                                        </button>
-                                    </div>
-                                </div>
 
-                                <div className="text-xl font-bold text-slate-600 pb-6 pt-2">:</div>
+                                    <div className="text-xl font-bold text-slate-600 pb-6 pt-2">:</div>
 
-                                {/* Seconds */}
-                                <div className="flex flex-col items-center gap-1">
-                                    <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Sec</span>
-                                    <div className="text-xl font-mono font-bold text-white w-12 text-center bg-black/20 rounded py-1">
-                                        {minutes === 0 && seconds === 0 ? '--' : formatNumber(seconds)}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => adjustTime('seconds', -1)}
-                                            className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
-                                        >
-                                            -
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => adjustTime('seconds', 1)}
-                                            className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
-                                        >
-                                            +
-                                        </button>
+                                    {/* Seconds */}
+                                    <div className="flex flex-col items-center gap-1">
+                                        <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Sec</span>
+                                        <div className="text-xl font-mono font-bold text-white w-12 text-center bg-black/20 rounded py-1">
+                                            {minutes === 0 && seconds === 0 ? '--' : formatNumber(seconds)}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => adjustTime('seconds', -1)}
+                                                className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
+                                            >
+                                                -
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => adjustTime('seconds', 1)}
+                                                className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-all active:scale-95"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
 
                     <button
                         type="submit"

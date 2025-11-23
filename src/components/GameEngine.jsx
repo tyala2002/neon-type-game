@@ -114,9 +114,9 @@ const GameEngine = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center space-y-16 w-full"
+                    className="text-center space-y-10 w-full"
                 >
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                         <motion.h1
                             animate={{
                                 textShadow: [
@@ -135,7 +135,7 @@ const GameEngine = () => {
                         </p>
                     </div>
 
-                    <div className="max-w-md mx-auto w-full space-y-8">
+                    <div className="max-w-md mx-auto w-full space-y-6">
                         <CustomTextForm
                             onStart={(text, duration) => {
                                 setShowFinishConfirmation(false);
