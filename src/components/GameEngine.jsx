@@ -38,6 +38,7 @@ const GameEngine = () => {
     const [showRankingModal, setShowRankingModal] = useState(false);
     const [userRank, setUserRank] = useState(null);
     const [lastGameSettings, setLastGameSettings] = useState({ text: null, duration: null });
+    const [rankingTab, setRankingTab] = useState('leaderboard');
 
     // Load all text files for retry randomization
     const textFiles = import.meta.glob('../target_text/*.txt', { as: 'raw', eager: true });
@@ -156,11 +157,17 @@ const GameEngine = () => {
                             }}
                             gameMode={gameMode}
                             onModeChange={setGameMode}
-                            onShowRanking={() => setShowRankingModal(true)}
+                            onShowRanking={(tab = 'leaderboard') => {
+                                setRankingTab(tab);
+                                setShowRankingModal(true);
+                            }}
                         />
                         <AnimatePresence>
                             {showRankingModal && (
-                                <RankingBoard onClose={() => setShowRankingModal(false)} />
+                                <RankingBoard
+                                    onClose={() => setShowRankingModal(false)}
+                                    initialTab={rankingTab}
+                                />
                             )}
                         </AnimatePresence>
                     </div>
@@ -319,6 +326,18 @@ const GameEngine = () => {
 
                                             // Save username to localStorage
                                             localStorage.setItem('username', username.trim());
+
+                                            // Save to Local History
+                                            const historyItem = {
+                                                date: new Date().toISOString(),
+                                                score: score,
+                                                cpm: cpm,
+                                                accuracy: accuracy
+                                            };
+                                            const currentHistory = JSON.parse(localStorage.getItem('neon_type_history') || '[]');
+                                            currentHistory.push(historyItem);
+                                            localStorage.setItem('neon_type_history', JSON.stringify(currentHistory));
+
                                         } catch (error) {
                                             console.error('Error submitting score:', error);
                                             alert(`Failed to submit score: ${error.message}`);

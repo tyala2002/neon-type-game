@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import GlassCard from './UI/GlassCard';
-import { Trophy } from 'lucide-react';
+import { Trophy, History } from 'lucide-react';
 
 const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
     const [minutes, setMinutes] = useState(0);
@@ -77,11 +77,19 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
                                 </p>
                                 <button
                                     type="button"
-                                    onClick={onShowRanking}
+                                    onClick={() => onShowRanking('leaderboard')}
                                     className="flex items-center justify-center gap-2 w-full py-2.5 mb-4 rounded-lg bg-white/5 hover:bg-white/10 text-yellow-400 text-sm font-bold transition-colors border border-yellow-500/30"
                                 >
                                     <Trophy className="w-4 h-4" />
                                     View Leaderboard
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => onShowRanking('history')}
+                                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-yellow-400 text-sm font-bold transition-colors border border-yellow-500/30"
+                                >
+                                    <History className="w-4 h-4" />
+                                    My History
                                 </button>
                             </div>
                         ) : (
@@ -152,8 +160,8 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
                         {gameMode === 'ranking' ? 'Start Ranking Game' : 'Start Challenge Game'}
                     </button>
                 </form>
-            </div>
-        </GlassCard>
+            </div >
+        </GlassCard >
     );
 };
 
