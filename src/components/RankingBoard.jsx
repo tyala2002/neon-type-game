@@ -95,7 +95,7 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
                 onClick={(e) => e.stopPropagation()}
                 className="w-full max-w-4xl"
             >
-                <GlassCard className="p-6 w-full h-[70vh] flex flex-col relative">
+                <GlassCard className="w-full h-[70vh]" innerClassName="flex flex-col h-full p-6 relative">
                     <div className="absolute top-4 right-4 flex items-center gap-2">
                         {activeTab === 'leaderboard' && (
                             <button
@@ -130,7 +130,7 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
 
                     <div className="flex-1 overflow-hidden flex flex-col">
                         {activeTab === 'leaderboard' ? (
-                            <div className="flex-1 overflow-y-auto custom-scrollbar">
+                            <div className="flex-1 overflow-y-auto custom-scrollbar overscroll-contain">
                                 <table className="w-full text-left border-collapse">
                                     <thead className="sticky top-0 dark:bg-[#0f172a] bg-slate-100 z-10">
                                         <tr className="text-xs dark:text-slate-400 text-slate-500 uppercase tracking-wider border-b dark:border-white/10 border-slate-200">
