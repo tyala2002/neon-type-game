@@ -299,13 +299,22 @@ const GameEngine = () => {
                                                             score: score,
                                                             cpm: cpm,
                                                             accuracy: accuracy,
-                                                            created_at: new Date().toISOString()
+                                                            created_at: new Date().toISOString(),
+                                                            last_played_at: new Date().toISOString()
                                                         })
                                                         .eq('id', bestRecord.id);
 
                                                     if (updateError) throw updateError;
                                                     setSubmissionStatus('success');
                                                 } else {
+                                                    // Even if not a high score, update last_played_at to prevent deletion
+                                                    await supabase
+                                                        .from('scores')
+                                                        .update({
+                                                            last_played_at: new Date().toISOString()
+                                                        })
+                                                        .eq('id', bestRecord.id);
+
                                                     setSubmissionStatus('not_high_score');
                                                 }
                                             } else {
@@ -317,7 +326,8 @@ const GameEngine = () => {
                                                             username: username.trim(),
                                                             score: score,
                                                             cpm: cpm,
-                                                            accuracy: accuracy
+                                                            accuracy: accuracy,
+                                                            last_played_at: new Date().toISOString()
                                                         }
                                                     ]);
 

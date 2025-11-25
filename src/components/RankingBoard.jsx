@@ -11,18 +11,23 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
     const { theme } = useTheme();
     const [activeTab, setActiveTab] = useState(initialTab); // 'leaderboard' | 'history'
     const [selectedMetric, setSelectedMetric] = useState('score'); // 'score' | 'cpm' | 'accuracy'
-    const [scores, setScores] = useState([]);
+    const [scores, setScores] = useState(null);
     const [localHistory, setLocalHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState(null);
+    const [timeRange, setTimeRange] = useState('all'); // 'week' | 'month' | 'year' | 'all'
+    const [lastFetchedTimeRange, setLastFetchedTimeRange] = useState(null);
 
     useEffect(() => {
         if (activeTab === 'leaderboard') {
-            fetchScores();
+            if (scores === null || timeRange !== lastFetchedTimeRange) {
+                fetchScores();
+                setLastFetchedTimeRange(timeRange);
+            }
         } else {
             loadLocalHistory();
         }
-    }, [activeTab]);
+    }, [activeTab, timeRange]);
 
     const fetchScores = async () => {
         setLoading(true);
@@ -35,11 +40,31 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
         }
 
         try {
-            const { data, error } = await supabase
+            let query = supabase
                 .from('scores')
                 .select('*')
                 .order('score', { ascending: false })
                 .limit(100);
+
+            if (timeRange !== 'all') {
+                const now = new Date();
+                let startDate = new Date();
+
+                switch (timeRange) {
+                    case 'week':
+                        startDate.setDate(now.getDate() - 7);
+                        break;
+                    case 'month':
+                        startDate.setMonth(now.getMonth() - 1);
+                        break;
+                    case 'year':
+                        startDate.setFullYear(now.getFullYear() - 1);
+                        break;
+                }
+                query = query.gte('created_at', startDate.toISOString());
+            }
+
+            const { data, error } = await query;
 
             if (error) throw error;
             setScores(data);
@@ -97,15 +122,6 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
             >
                 <GlassCard className="w-full h-[70vh]" innerClassName="flex flex-col h-full p-6 relative">
                     <div className="absolute top-4 right-4 flex items-center gap-2">
-                        {activeTab === 'leaderboard' && (
-                            <button
-                                onClick={fetchScores}
-                                className="p-2 rounded-full hover:bg-white/10 dark:text-slate-400 text-slate-500 hover:text-white dark:hover:text-white transition-colors"
-                                title="Refresh Ranking"
-                            >
-                                <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-                            </button>
-                        )}
                         <button
                             onClick={onClose}
                             className="p-2 rounded-full hover:bg-white/10 dark:text-slate-400 text-slate-500 hover:text-white dark:hover:text-white transition-colors"
@@ -114,17 +130,36 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
                         </button>
                     </div>
 
-                    <div className="flex items-center gap-4 mb-6 pr-12">
-                        <div className="p-2 rounded-lg bg-yellow-500/20">
-                            {activeTab === 'leaderboard' ? (
-                                <Trophy className="w-6 h-6 text-yellow-400" />
-                            ) : (
-                                <History className="w-6 h-6 text-yellow-400" />
-                            )}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pr-12 gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 rounded-lg bg-yellow-500/20">
+                                {activeTab === 'leaderboard' ? (
+                                    <Trophy className="w-6 h-6 text-yellow-400" />
+                                ) : (
+                                    <History className="w-6 h-6 text-yellow-400" />
+                                )}
+                            </div>
+                            <h2 className="text-2xl font-bold dark:text-white text-slate-900">
+                                {activeTab === 'leaderboard' ? 'Leaderboard' : 'My History'}
+                            </h2>
                         </div>
-                        <h2 className="text-2xl font-bold dark:text-white text-slate-900">
-                            {activeTab === 'leaderboard' ? 'Leaderboard' : 'My History'}
-                        </h2>
+
+                        {activeTab === 'leaderboard' && (
+                            <div className="flex bg-slate-100 dark:bg-slate-800/50 rounded-lg p-1">
+                                {['week', 'month', 'year', 'all'].map((range) => (
+                                    <button
+                                        key={range}
+                                        onClick={() => setTimeRange(range)}
+                                        className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all capitalize ${timeRange === range
+                                            ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
+                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                                            }`}
+                                    >
+                                        {range === 'all' ? 'All Time' : range}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
 
@@ -158,7 +193,7 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
                                             </tr>
                                         ) : scores.length === 0 ? (
                                             <tr>
-                                                <td colSpan="6" className="py-8 text-center text-slate-500">No scores yet. Be the first!</td>
+                                                <td colSpan="6" className="py-8 text-center text-slate-500">No scores found for this period.</td>
                                             </tr>
                                         ) : (
                                             scores.map((score, index) => (
