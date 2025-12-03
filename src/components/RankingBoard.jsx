@@ -44,7 +44,7 @@ const RankingBoard = ({ onClose, initialTab = 'leaderboard' }) => {
                 .from('scores')
                 .select('*')
                 .order('score', { ascending: false })
-                .limit(100);
+                .limit(300);
 
             if (timeRange !== 'all') {
                 const now = new Date();
