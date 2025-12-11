@@ -263,96 +263,55 @@ const GameEngine = () => {
                                     onClick={async () => {
                                         if (!username.trim()) return;
 
-                                        if (!supabase) {
-                                            alert("Supabase client not initialized. Check .env variables.");
-                                            return;
-                                        }
-
                                         setIsSubmitting(true);
                                         try {
-                                            // 1. Check if user exists (fetch ALL records to handle duplicates)
-                                            const { data: existingScores, error: fetchError } = await supabase
-                                                .from('scores')
-                                                .select('*')
-                                                .eq('username', username.trim())
-                                                .order('score', { ascending: false }); // Get highest score first
+                                            // Edge Functionのエンドポイント
+                                            const submitScoreUrl = import.meta.env.VITE_SUBMIT_SCORE_URL;
 
-                                            if (fetchError) throw fetchError;
-
-                                            if (existingScores && existingScores.length > 0) {
-                                                const bestRecord = existingScores[0];
-                                                const duplicateIds = existingScores.slice(1).map(r => r.id);
-
-                                                // 2. Cleanup duplicates if any exist
-                                                if (duplicateIds.length > 0) {
-                                                    await supabase
-                                                        .from('scores')
-                                                        .delete()
-                                                        .in('id', duplicateIds);
-                                                }
-
-                                                // 3. Check if new score is higher than the BEST existing score
-                                                if (score > bestRecord.score) {
-                                                    const { error: updateError } = await supabase
-                                                        .from('scores')
-                                                        .update({
-                                                            score: score,
-                                                            cpm: cpm,
-                                                            accuracy: accuracy,
-                                                            created_at: new Date().toISOString(),
-                                                            last_played_at: new Date().toISOString()
-                                                        })
-                                                        .eq('id', bestRecord.id);
-
-                                                    if (updateError) throw updateError;
-                                                    setSubmissionStatus('success');
-                                                } else {
-                                                    // Even if not a high score, update last_played_at to prevent deletion
-                                                    await supabase
-                                                        .from('scores')
-                                                        .update({
-                                                            last_played_at: new Date().toISOString()
-                                                        })
-                                                        .eq('id', bestRecord.id);
-
-                                                    setSubmissionStatus('not_high_score');
-                                                }
-                                            } else {
-                                                // 4. User does not exist, insert new score
-                                                const { error: insertError } = await supabase
-                                                    .from('scores')
-                                                    .insert([
-                                                        {
-                                                            username: username.trim(),
-                                                            score: score,
-                                                            cpm: cpm,
-                                                            accuracy: accuracy,
-                                                            last_played_at: new Date().toISOString()
-                                                        }
-                                                    ]);
-
-                                                if (insertError) throw insertError;
-                                                setSubmissionStatus('success');
+                                            if (!submitScoreUrl) {
+                                                alert('スコア送信機能が設定されていません。.envファイルを確認してください。');
+                                                return;
                                             }
 
-                                            // 5. Calculate Rank (Always calculate rank for the CURRENT score)
-                                            const { count, error: countError } = await supabase
-                                                .from('scores')
-                                                .select('*', { count: 'exact', head: true })
-                                                .gt('score', score);
+                                            // サーバー側で検証するため、生データを送信
+                                            const response = await fetch(submitScoreUrl, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+                                                },
+                                                body: JSON.stringify({
+                                                    input: input,
+                                                    targetText: targetText,
+                                                    startTime: startTime,
+                                                    endTime: endTime,
+                                                    username: username.trim()
+                                                })
+                                            });
 
-                                            if (countError) throw countError;
-                                            setUserRank(count + 1);
+                                            const result = await response.json();
 
-                                            // Save username to localStorage
+                                            if (!response.ok) {
+                                                throw new Error(result.error || 'スコアの送信に失敗しました');
+                                            }
+
+                                            // サーバーから返されたスコアとランクを使用
+                                            if (result.isHighScore) {
+                                                setSubmissionStatus('success');
+                                            } else {
+                                                setSubmissionStatus('not_high_score');
+                                            }
+                                            setUserRank(result.rank);
+
+                                            // ユーザー名をlocalStorageに保存
                                             localStorage.setItem('username', username.trim());
 
-                                            // Save to Local History
+                                            // ローカル履歴に保存
                                             const historyItem = {
                                                 date: new Date().toISOString(),
-                                                score: score,
-                                                cpm: cpm,
-                                                accuracy: accuracy
+                                                score: result.score,
+                                                cpm: result.cpm,
+                                                accuracy: result.accuracy
                                             };
                                             const currentHistory = JSON.parse(localStorage.getItem('neon_type_history') || '[]');
                                             currentHistory.push(historyItem);
@@ -360,7 +319,7 @@ const GameEngine = () => {
 
                                         } catch (error) {
                                             console.error('Error submitting score:', error);
-                                            alert(`Failed to submit score: ${error.message}`);
+                                            alert(`スコアの送信に失敗しました: ${error.message}`);
                                         } finally {
                                             setIsSubmitting(false);
                                         }
