@@ -155,6 +155,8 @@ const TypingDisplay = ({
                             onCopy={(e) => e.preventDefault()}
                             onPaste={(e) => e.preventDefault()}
                             onCut={(e) => e.preventDefault()}
+                            onDrop={(e) => e.preventDefault()}
+                            onDragOver={(e) => e.preventDefault()}
                         />
                     </div>
                 </div>

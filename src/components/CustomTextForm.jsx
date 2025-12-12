@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GlassCard from './UI/GlassCard';
 import { Trophy, History } from 'lucide-react';
 
@@ -19,6 +19,20 @@ const CustomTextForm = ({ onStart, gameMode, onModeChange, onShowRanking }) => {
             onStart(randomText, totalSeconds > 0 ? totalSeconds : null);
         }
     };
+
+    // Listen for Enter key to start game
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSubmit(e);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [minutes, seconds, texts, onStart, gameMode]);
+
 
     const adjustTime = (type, amount) => {
         if (type === 'minutes') {
