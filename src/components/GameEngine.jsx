@@ -70,8 +70,9 @@ const GameEngine = () => {
         if (e.key === 'Enter' && !isComposing) {
             e.preventDefault();
 
-            // Ranking Mode: Require full text completion
-            if (gameMode === 'ranking' && input.length < targetText.length) {
+            // Ranking Mode: Require at least 98% text completion
+            const completionRate = (input.length / targetText.length) * 100;
+            if (gameMode === 'ranking' && completionRate < 98) {
                 // Optionally show a visual indicator that they need to complete the text
                 return;
             }
